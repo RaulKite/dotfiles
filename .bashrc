@@ -1,19 +1,10 @@
-. ~/bin/bash_colors.sh
+~/.git-prompt.sh
 
 # Add paths that should have been there by default
 export PATH=${PATH}:/usr/local/bin
 export PATH="~/bin:$PATH"
-export PATH="$PATH:~/.gem/ruby/1.8/bin"
-
-# Add postgres to the path
-export PATH=$PATH:/usr/local/pgsql/bin
-export PATH=$PATH:/Library/PostgreSQL/8.3/bin
 
 # Unbreak broken, non-colored terminal
-export TERM='xterm-color'
-alias ls='ls -G'
-alias ll='ls -lG'
-export LSCOLORS="ExGxBxDxCxEgEdxbxgxcxd"
 export GREP_OPTIONS="--color"
 
 # Erase duplicates in history
@@ -48,23 +39,35 @@ grb_git_prompt() {
         echo ${GIT_PROMPT}
     fi
 }
-PS1="\h:\W\$(grb_git_prompt) \u\$ "
 
-activate_virtualenv() {
-    if [ -f env/bin/activate ]; then . env/bin/activate;
-    elif [ -f ../env/bin/activate ]; then . ../env/bin/activate;
-    elif [ -f ../../env/bin/activate ]; then . ../../env/bin/activate;
-    elif [ -f ../../../env/bin/activate ]; then . ../../../env/bin/activate;
-    fi
+function __docker_prompt {
+  if [ -n "$DOCKER_HOST" ]; then
+    echo "🐳 "
+  fi
 }
 
-python_module_dir () {
-    echo "$(python -c "import os.path as _, ${1}; \
-        print _.dirname(_.realpath(${1}.__file__[:-1]))"
-        )"
+export CLICOLOR=1
+export LSCOLORS='ExFxCxDxBxegedabagaced'
+
+function prompt {
+  local BLACK="\[\033[0;30m\]"
+  local RED="\[\033[0;31m\]"
+  local GREEN="\[\033[0;32m\]"
+  local YELLOW="\[\033[0;33m\]"
+  local BLUE="\[\033[0;34m\]"
+  local PURPLE="\[\033[0;35m\]"
+  local CYAN="\[\033[0;36m\]"
+  local WHITE="\[\033[0;37m\]"
+  local WHITEBOLD="\[\033[1;37m\]"
+  export PS1="\h:\$(__docker_prompt)\$(grb_git_prompt)\W \u${WHITE}$ "
+  export PS1="\[\033[G\]$PS1"
 }
 
-source ~/bin/git-completion.bash
+prompt
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+
+#PS1="\h:\W\$(grb_git_prompt) \u\$ "
+
+#source ~/bin/git-completion.bash
+
 
